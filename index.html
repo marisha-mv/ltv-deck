@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stop Buying Customers You Already Own — Marisha Lakhiani</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!--
+  NAVIGATE: → / space = next · ← = back · F = fullscreen · O = overview
+  SWAP A PHOTO: replace a <div class="photo" ...> with <img class="photo" src="your.jpg" alt="">
+  Slide 11 (Prime peak) needs a real press image of Prime / Logan Paul & KSI — drop it into that photo slot.
+  "Internal" flag = real internal figure.
+-->
+<style>
+  :root{
+    --paper:#FBF9F5; --ink:#14101C; --purple:#7A12D4; --purple-l:#B15CF0; --pink:#F0D9FF;
+    --tint:#F3E9FC; --tint2:#E5D3F7; --muted:#8A8296; --line:#EAE3F2; --gray:#CFC7DA;
+    --warn:#E0533B; --pos:#37B47E; --amber:#C08A1E; --amber-bg:#FBF3E2; --sky:#4A78C0;
+    --grad:linear-gradient(120deg,#B15CF0,#7A12D4 60%,#4A0A85);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{background:#070410;font-family:'Inter',sans-serif;overflow:hidden;color:var(--ink);}
+  .display{font-family:'Poppins',sans-serif;} .serif{font-family:'Fraunces',serif;}
+  #stage{position:fixed;inset:0;}
+  .slide{position:absolute;inset:0;background:var(--paper);display:flex;flex-direction:column;
+    padding:clamp(38px,6vh,68px) clamp(46px,7.5vw,110px);opacity:0;visibility:hidden;transition:opacity .5s ease;overflow:hidden;}
+  .slide.active{opacity:1;visibility:visible;}
+  .slide.center{align-items:center;justify-content:center;text-align:center;}
+  .slide.dark{background:radial-gradient(120% 120% at 20% 0%,#2A1247 0%,#150A29 45%,#080413 100%);color:#fff;}
+  .slide.night{background:radial-gradient(120% 100% at 80% 100%,#3A1550 0%,#160B2A 50%,#060310 100%);color:#fff;}
+  .slide.plum{background:linear-gradient(135deg,#7A12D4 0%,#4A0A85 100%);color:#fff;}
+  .slide.glow::before{content:"";position:absolute;width:60vw;height:60vw;border-radius:50%;
+    background:radial-gradient(circle,rgba(177,92,240,.35),transparent 65%);top:-15vw;right:-12vw;pointer-events:none;}
+  .kicker{font-weight:600;font-size:clamp(11px,1.1vw,14px);letter-spacing:.32em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+  .slide.dark .kicker,.slide.night .kicker,.slide.plum .kicker{color:var(--pink);opacity:.9;}
+  h2{font-family:'Poppins';font-weight:700;font-size:clamp(28px,3.7vw,54px);line-height:1.04;letter-spacing:-.022em;margin-bottom:auto;}
+  h2 em{font-style:italic;color:var(--purple);font-family:'Fraunces';font-weight:500;}
+  .slide.dark h2 em,.slide.night h2 em,.slide.plum h2 em{color:var(--pink);}
+  .content{flex:1;display:flex;align-items:center;min-height:0;padding-top:clamp(18px,3vh,34px);}
+  .split{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,4.5vw,68px);width:100%;align-items:center;}
+  .split.rev{grid-template-columns:.9fr 1.1fr;}
+  .viz{display:flex;align-items:center;justify-content:center;min-width:0;}
+  .points{display:flex;flex-direction:column;gap:clamp(14px,2vh,22px);}
+  .pt{display:flex;gap:14px;font-size:clamp(15px,1.5vw,21px);line-height:1.42;}
+  .pt::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--purple);margin-top:.55em;box-shadow:0 0 0 4px rgba(122,18,212,.14);}
+  .slide.dark .pt::before,.slide.night .pt::before,.slide.plum .pt::before{background:var(--pink);box-shadow:0 0 0 4px rgba(240,217,255,.14);}
+  .pt b{font-weight:700;} .muted{color:var(--muted);} .pur{color:var(--purple);}
+  .slide.dark .muted,.slide.night .muted{color:rgba(255,255,255,.62);}
+  .hero{font-family:'Poppins';font-weight:800;letter-spacing:-.04em;line-height:.82;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero.white{background:none;color:#fff;-webkit-text-fill-color:#fff;}
+  .heronum{font-size:clamp(120px,25vw,360px);} .heromid{font-size:clamp(70px,14vw,200px);}
+  .herosub{font-family:'Fraunces';font-weight:500;font-size:clamp(18px,2.3vw,32px);line-height:1.22;max-width:27ch;margin:20px auto 0;}
+  .slide.dark .herosub,.slide.night .herosub{color:rgba(255,255,255,.9);}
+  .flag{position:absolute;bottom:16px;left:clamp(46px,7.5vw,110px);font-weight:600;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);background:var(--amber-bg);padding:3px 9px;border-radius:20px;opacity:.9;}
+  .slide.dark .flag,.slide.night .flag{color:var(--pink);background:rgba(240,217,255,.12);}
+  .bars{display:flex;align-items:flex-end;gap:clamp(16px,3vw,48px);height:min(44vh,400px);}
+  .barcol{display:flex;flex-direction:column;align-items:center;gap:12px;height:100%;justify-content:flex-end;}
+  .bar{width:clamp(60px,7.5vw,116px);border-radius:12px 12px 0 0;position:relative;}
+  .bar .top{position:absolute;top:-40px;left:50%;transform:translateX(-50%);font-family:'Poppins';font-weight:800;font-size:clamp(19px,2.2vw,32px);white-space:nowrap;letter-spacing:-.02em;}
+  .barlbl{font-size:clamp(12px,1.25vw,15px);color:var(--muted);text-align:center;max-width:14ch;line-height:1.3;}
+  svg{max-width:100%;height:auto;overflow:visible;} .txt{font-family:'Poppins';font-weight:700;} .txts{font-family:'Inter';}
+  /* product architecture */
+  .arch{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,46px);width:100%;}
+  .archcol{display:flex;flex-direction:column;gap:10px;}
+  .archhead{font-family:'Poppins';font-weight:700;font-size:clamp(13px,1.4vw,18px);letter-spacing:.04em;margin-bottom:4px;}
+  .prod{display:flex;justify-content:space-between;align-items:center;border-radius:12px;padding:12px 16px;font-size:clamp(13px,1.35vw,18px);}
+  .prod .p{font-family:'Poppins';font-weight:700;}
+  .loss .prod{background:var(--tint);color:var(--ink);} .loss .prod .p{color:var(--muted);}
+  .profit .prod{background:var(--grad);color:#fff;} .profit .prod .p{color:var(--pink);}
+  /* ascension framework */
+  .fw{display:flex;align-items:flex-end;gap:clamp(10px,1.6vw,22px);}
+  .fwstep{border-radius:16px;padding:clamp(14px,1.8vw,24px);display:flex;flex-direction:column;gap:6px;justify-content:flex-end;}
+  .fwstep .s{font-family:'Poppins';font-weight:700;font-size:clamp(14px,1.5vw,21px);}
+  .fwstep .d{font-size:clamp(11px,1.15vw,15px);opacity:.85;line-height:1.3;}
+  /* climb rungs */
+  .rungs{display:flex;align-items:flex-end;gap:clamp(6px,1vw,15px);justify-content:center;}
+  .rung{border-radius:12px;padding:12px 7px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;width:clamp(70px,8.5vw,130px);border:2px solid rgba(255,255,255,.28);background:rgba(255,255,255,.06);}
+  .rung.hero2{background:var(--grad);border:none;}
+  .rung .rt{font-family:'Poppins';font-weight:700;font-size:clamp(10px,1.1vw,15px);line-height:1.1;color:#fff;}
+  .rung .rv{font-size:clamp(9px,.95vw,12px);color:var(--pink);font-weight:600;}
+  .divider .big{font-family:'Poppins';font-weight:800;font-size:clamp(64px,14vw,220px);line-height:.85;letter-spacing:-.04em;}
+  .chips{display:flex;flex-direction:column;gap:14px;width:100%;}
+  .chip{display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 20px;}
+  .chip .n{font-family:'Poppins';font-weight:800;font-size:clamp(22px,2.8vw,40px);color:var(--pink);letter-spacing:-.02em;white-space:nowrap;}
+  .chip .t{font-size:clamp(12px,1.35vw,17px);color:rgba(255,255,255,.82);line-height:1.35;}
+  .photo{width:100%;height:min(56vh,520px);border-radius:22px;border:2px dashed var(--tint2);background:var(--tint);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--purple);}
+  .photo.dk{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.25);color:var(--pink);}
+  .photo .pl{font-family:'Poppins';font-weight:600;font-size:12px;letter-spacing:.22em;text-transform:uppercase;}
+  .photo .cap{font-size:14px;color:var(--muted);font-style:italic;margin-top:10px;text-align:center;max-width:80%;}
+  .photo.dk .cap{color:rgba(255,255,255,.6);}
+  .photo .sw{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gray);margin-top:16px;}
+  .title-name{margin-top:auto;font-weight:500;font-size:clamp(13px,1.3vw,17px);color:rgba(255,255,255,.7);letter-spacing:.02em;}
+  #dots{position:fixed;bottom:20px;left:0;right:0;display:flex;gap:5px;justify-content:center;z-index:20;flex-wrap:wrap;padding:0 40px;}
+  #dots .d{width:6px;height:6px;border-radius:50%;background:#3a3348;cursor:pointer;transition:.25s;}
+  #dots .d.on{background:var(--purple-l);transform:scale(1.5);box-shadow:0 0 8px rgba(177,92,240,.7);}
+  #num{position:fixed;bottom:15px;right:20px;font-family:'Poppins';font-weight:600;font-size:12px;color:#fff;background:rgba(255,255,255,.12);padding:4px 11px;border-radius:20px;z-index:20;}
+  #bar{position:fixed;top:0;left:0;height:3px;background:var(--grad);width:0;transition:width .45s;z-index:20;}
+  #ov{position:fixed;inset:0;background:#070410;z-index:40;display:none;grid-template-columns:repeat(5,1fr);gap:8px;padding:22px;overflow:auto;}
+  #ov.show{display:grid;}
+  #ov .th{aspect-ratio:16/9;border-radius:8px;position:relative;cursor:pointer;border:2px solid transparent;}
+  #ov .th.cur{border-color:var(--purple-l);}
+  #ov .th .n{position:absolute;bottom:4px;left:6px;font-family:'Poppins';font-weight:700;font-size:11px;color:#fff;background:rgba(0,0,0,.55);padding:1px 7px;border-radius:6px;}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage">
+
+  <!-- 1 TITLE -->
+  <section class="slide dark glow center">
+    <div style="margin:auto 0;">
+      <div class="kicker">Meta Founder Forum · Da Nang · 20 Aug 2026</div>
+      <h2 class="serif" style="font-weight:400;font-size:clamp(42px,8vw,110px);line-height:.98;color:#fff;max-width:16ch;">Stop buying customers <em style="color:var(--pink)">you already own.</em></h2>
+    </div>
+    <div class="title-name">Marisha Lakhiani · Chief Growth Officer, Mindvalley</div>
+  </section>
+
+  <!-- 2 THESIS -->
+  <section class="slide night glow center">
+    <div class="kicker">The question</div>
+    <div style="margin:auto 0;">
+      <h2 style="color:rgba(255,255,255,.55);font-size:clamp(24px,3vw,40px);font-weight:600;">You know exactly who owns your</h2>
+      <div class="hero white heromid" style="margin:.05em 0;">ROAS.</div>
+      <h2 class="serif" style="font-weight:500;font-size:clamp(28px,4.5vw,64px);color:var(--pink);">So who owns your LTV?</h2>
+      <div class="pt" style="justify-content:center;margin-top:32px;max-width:48ch;margin-left:auto;margin-right:auto;"><span style="color:rgba(255,255,255,.8)">Every hand goes up for the first. Almost none for the second. That gap is the whole talk.</span></div>
+    </div>
+  </section>
+
+  <!-- 3 WHAT divider -->
+  <section class="slide plum center">
+    <div class="kicker" style="color:rgba(255,255,255,.75)">Part one</div>
+    <div class="divider" style="margin:auto 0;"><div class="big">The what</div><div class="serif" style="font-size:clamp(18px,2.4vw,30px);font-weight:500;margin-top:12px;opacity:.9;">Why LTV is the only game that matters</div></div>
+  </section>
+
+  <!-- 4 THE BET -->
+  <section class="slide">
+    <div class="kicker">Our story</div>
+    <h2>We bet everything on <em>subscription.</em></h2>
+    <div class="content"><div class="split rev">
+      <div class="points">
+        <div class="pt"><span>The logic felt airtight: recurring revenue = rising LTV.</span></div>
+        <div class="pt"><span>Get the member, keep the member, bank it every year.</span></div>
+        <div class="pt"><b>We were half right — and the other half nearly cost us the business.</b></div>
+      </div>
+      <div class="viz"><div class="photo" data-swap="Mindvalley membership / app hero"><span class="pl">[ Photo ]</span><span class="cap">the membership bet</span><span class="sw">swap me</span></div></div>
+    </div></div>
+  </section>
+
+  <!-- 5 FALSE BELIEF / churn -->
+  <section class="slide">
+    <div class="kicker">What we learned</div>
+    <h2>Recurring revenue still <em>leaks.</em> You're not Netflix.</h2>
+    <div class="content"><div class="split">
+      <div class="viz">
+        <svg viewBox="0 0 420 250" width="100%">
+          <line x1="44" y1="20" x2="44" y2="210" stroke="#EAE3F2" stroke-width="2"/>
+          <line x1="44" y1="210" x2="410" y2="210" stroke="#EAE3F2" stroke-width="2"/>
+          <polyline points="60,60 170,110 280,150 395,178" fill="none" stroke="#7A12D4" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="60" cy="60" r="6" fill="#7A12D4"/><circle cx="170" cy="110" r="6" fill="#7A12D4"/><circle cx="280" cy="150" r="6" fill="#B15CF0"/><circle cx="395" cy="178" r="6" fill="#E0533B"/>
+          <text x="60" y="235" text-anchor="middle" class="txts" font-size="13" fill="#8A8296">Year 1</text>
+          <text x="170" y="235" text-anchor="middle" class="txts" font-size="13" fill="#8A8296">Year 2</text>
+          <text x="280" y="235" text-anchor="middle" class="txts" font-size="13" fill="#8A8296">Year 3</text>
+          <text x="395" y="235" text-anchor="middle" class="txts" font-size="13" fill="#8A8296">Year 4</text>
+        </svg>
+      </div>
+      <div class="points">
+        <div class="pt"><span>Customers are drowning in subscriptions — yours is one cancel away.</span></div>
+        <div class="pt"><span>Unless you're the one they can't live without, they eventually leave.</span></div>
+        <div class="pt"><b>Recurring is necessary. It is not the same as loyal.</b></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- 6 THE PIVOT -->
+  <section class="slide center">
+    <div class="kicker">So we changed the game</div>
+    <div style="margin:auto 0;">
+      <h2 style="max-width:22ch;">If we couldn't hold them forever,</h2>
+      <h2 class="serif" style="font-weight:500;color:var(--purple);margin-top:.25em;max-width:26ch;">we could give them somewhere to climb.</h2>
+      <div class="pt" style="justify-content:center;margin-top:28px;"><span>So we launched <b>Mindvalley Academy</b> — a ladder of premium programs.</span></div>
+    </div>
+  </section>
+
+  <!-- 7 WHAT WE SELL -->
+  <section class="slide">
+    <div class="kicker">What we actually sell</div>
+    <h2>Loss leaders bring them in. <em>Profit maximizers</em> pay the bills.</h2>
+    <div class="content"><div class="arch">
+      <div class="archcol loss">
+        <div class="archhead muted">Loss leaders · acquire</div>
+        <div class="prod"><span>Free masterclass</span><span class="p">$0</span></div>
+        <div class="prod"><span>Meditations / single program</span><span class="p">$49</span></div>
+        <div class="prod"><span>Membership</span><span class="p">$399/yr</span></div>
+      </div>
+      <div class="archcol profit">
+        <div class="archhead pur">Profit maximizers · monetize</div>
+        <div class="prod"><span>Accelerator</span><span class="p">$1,000</span></div>
+        <div class="prod"><span>Mastery</span><span class="p">$5,000</span></div>
+        <div class="prod"><span>Certification</span><span class="p">$10,000</span></div>
+        <div class="prod"><span>Guild</span><span class="p">premium</span></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- 8 72% -->
+  <section class="slide dark glow center">
+    <div class="kicker">The secret in our own database</div>
+    <div style="margin:auto 0;">
+      <div class="hero heronum">72%</div>
+      <div class="herosub">of our premium buyers were <span style="color:#fff">already our customers</span> before they bought.</div>
+      <div class="pt" style="justify-content:center;margin-top:24px;"><span style="color:rgba(255,255,255,.72)">You have your own version of this number. I'd bet you've never pulled it.</span></div>
+    </div>
+    <div class="flag">Internal · 21,418 of 29,594</div>
+  </section>
+
+  <!-- 9 PRIZE -->
+  <section class="slide">
+    <div class="kicker">The size of the prize</div>
+    <h2>A customer who climbs is worth <em>11×</em> one who doesn't.</h2>
+    <div class="content"><div class="split">
+      <div class="viz"><div class="bars">
+        <div class="barcol"><div class="bar" style="height:9%;background:var(--gray);"><span class="top" style="color:var(--muted)">$533</span></div><div class="barlbl">member<br>(949K people)</div></div>
+        <div class="barcol"><div class="bar" style="height:95%;background:var(--grad);"><span class="top pur">$5,638</span></div><div class="barlbl">premium buyer</div></div>
+      </div></div>
+      <div class="points">
+        <div class="pt"><span>949,000 members sit one rung below an 11× customer.</span></div>
+        <div class="pt"><span>Move just <b>1%</b> up one rung…</span></div>
+        <div class="pt"><b>≈ $48M in lifetime value — already in the building.</b></div>
+      </div>
+    </div></div>
+    <div class="flag">Internal · real LTV; $48M = 1% × 949K × gap</div>
+  </section>
+
+  <!-- 10 2.4% -->
+  <section class="slide night glow center">
+    <div class="kicker">But here's the catch</div>
+    <div style="margin:auto 0;">
+      <div class="hero heronum">2.4%</div>
+      <div class="herosub">of members <span style="color:#fff">ever climb.</span> The other <span style="color:#fff">97.6% stay stuck</span> on the bottom rung — at $533.</div>
+      <div class="pt" style="justify-content:center;margin-top:22px;"><span style="color:rgba(255,255,255,.72)">Subscription filled the base. It never built the climb. That's the money.</span></div>
+    </div>
+    <div class="flag">Internal · 22,945 of 972,166 members</div>
+  </section>
+
+  <!-- 11 THE HUMAN COST -->
+  <section class="slide center">
+    <div class="kicker">Put a face to it</div>
+    <div style="margin:auto 0;">
+      <h2 class="serif" style="font-weight:500;max-width:30ch;margin:0 auto;">Somewhere in that 97.6% is a member who's loved us for <em>four years.</em></h2>
+      <div class="pt" style="justify-content:center;margin-top:28px;max-width:56ch;margin-left:auto;margin-right:auto;"><span>She'd have paid <b>$15,000</b> for the transformation she actually wanted. We only ever offered her <b>$399</b>. We didn't lose her to a competitor — <b>we lost her to our own imagination.</b></span></div>
+    </div>
+    <div class="flag">Composite — swap for a real member story if you have one</div>
+  </section>
+
+  <!-- 12 PRIME PEAK (photo) -->
+  <section class="slide night">
+    <div class="kicker">A cautionary tale</div>
+    <h2 style="color:#fff;">The fastest-growing beverage brand <em>in history.</em></h2>
+    <div class="content"><div class="split">
+      <div class="viz"><div class="photo dk" data-swap="Prime bottle + Logan Paul & KSI at peak — press image"><span class="pl">[ Photo ]</span><span class="cap">Prime — Logan Paul &amp; KSI, at the peak<br>(drop in a press image)</span><span class="sw">swap me</span></div></div>
+      <div class="points">
+        <div class="pt"><span>Two creators, <b>40M+</b> followers. Acquisition was <b>free.</b></span></div>
+        <div class="pt"><span><b>$1.2B</b> at peak — billionth bottle faster than Gatorade ever did.</span></div>
+        <div class="pt"><span>Official drink of UFC, Arsenal, Barcelona, Bayern.</span></div>
+      </div>
+    </div></div>
+    <div class="flag">Public · Bloomberg</div>
+  </section>
+
+  <!-- 12 PRIME CRASH -->
+  <section class="slide dark glow center">
+    <div class="kicker">Then</div>
+    <div style="margin:auto 0;">
+      <div class="hero heronum" style="background:linear-gradient(120deg,#F0A24B,#E0533B);-webkit-background-clip:text;background-clip:text;">–76%</div>
+      <div class="herosub"><span style="color:#fff">£100 bottles</span> → the <span style="color:#fff">31p clearance bin.</span> The Australian arm: $85K left in the bank.</div>
+    </div>
+    <div class="flag">Public · Circana / ASIC filings</div>
+  </section>
+
+  <!-- 13 PRIME LESSON -->
+  <section class="slide center">
+    <div class="kicker">Why it died</div>
+    <div style="margin:auto 0;">
+      <h2 style="max-width:24ch;">Reach bought a million <em>first</em> purchases.</h2>
+      <h2 class="serif" style="font-weight:500;color:var(--purple);margin-top:.25em;max-width:24ch;">Nothing bought the second.</h2>
+      <div class="pt" style="justify-content:center;margin-top:28px;max-width:54ch;margin-left:auto;margin-right:auto;"><span>You can have a <b>good</b> product and still end up here — if you build a first-purchase machine with no second-purchase system behind it. Growth just hides it.</span></div>
+    </div>
+  </section>
+
+  <!-- 14 HOW divider -->
+  <section class="slide plum center">
+    <div class="kicker" style="color:rgba(255,255,255,.75)">Part two</div>
+    <div class="divider" style="margin:auto 0;"><div class="big">The how</div><div class="serif" style="font-size:clamp(18px,2.4vw,30px);font-weight:500;margin-top:12px;opacity:.9;">Building the climb — the right way</div></div>
+  </section>
+
+  <!-- 15 THE FRAMEWORK -->
+  <section class="slide dark glow">
+    <div class="kicker">The framework · not random products</div>
+    <h2 style="color:#fff;">Every rung buys <em>more speed and more support.</em></h2>
+    <div class="content"><div style="width:100%;">
+      <div class="fw">
+        <div class="fwstep" style="height:150px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);flex:1;">
+          <div class="s" style="color:#fff;">Do it yourself</div><div class="d" style="color:rgba(255,255,255,.75)">Course &amp; app. You learn at your own pace.</div></div>
+        <div class="fwstep" style="height:210px;background:rgba(177,92,240,.28);border:1px solid rgba(177,92,240,.5);flex:1;">
+          <div class="s" style="color:#fff;">Done <i>with</i> you</div><div class="d" style="color:rgba(255,255,255,.82)">Accelerator &amp; mastery. Coaching, cohort, accountability — results in days, not years.</div></div>
+        <div class="fwstep" style="height:270px;background:var(--grad);flex:1;">
+          <div class="s" style="color:#fff;">Done <i>for</i> you</div><div class="d" style="color:var(--pink)">Certification &amp; guild. Concierge, identity, status.</div></div>
+      </div>
+      <div class="pt" style="justify-content:center;margin-top:26px;max-width:60ch;margin-left:auto;margin-right:auto;">
+        <span style="color:rgba(255,255,255,.9)"><b>Fast beats free.</b> The faster you get them a result, the more they'll pay — so each rung sells <i>speed</i>, not just more content.</span></div>
+    </div></div>
+  </section>
+
+  <!-- 16 THE CLIMB / mechanism -->
+  <section class="slide night">
+    <div class="kicker">The mechanism · the climb</div>
+    <h2 style="color:#fff;">A free front door — then a designed <em>ascent.</em></h2>
+    <div class="content"><div style="width:100%;">
+      <div class="rungs">
+        <div class="rung" style="height:70px"><span class="rt">Masterclass</span><span class="rv">free</span></div>
+        <div class="rung" style="height:94px"><span class="rt">$49 program</span><span class="rv">the hook</span></div>
+        <div class="rung" style="height:118px"><span class="rt">Membership</span></div>
+        <div class="rung" style="height:142px"><span class="rt">Accelerator</span><span class="rv">$1K</span></div>
+        <div class="rung" style="height:166px"><span class="rt">Mastery</span><span class="rv">$5K · 11×</span></div>
+        <div class="rung" style="height:190px"><span class="rt">Certify</span></div>
+        <div class="rung hero2" style="height:214px"><span class="rt">Guild</span></div>
+      </div>
+      <div class="pt" style="justify-content:center;margin-top:24px;max-width:60ch;margin-left:auto;margin-right:auto;">
+        <span style="color:rgba(255,255,255,.85)">Don't convert on the first masterclass? <b>Three bites per lead</b> — a new teacher, a new angle — then the climb begins.</span></div>
+    </div></div>
+  </section>
+
+  <!-- 17 YOUR VERSION -->
+  <section class="slide">
+    <div class="kicker">This isn't a courses thing — it's a you thing</div>
+    <h2>Every business has a climb <em>hiding inside it.</em></h2>
+    <div class="content"><div style="width:100%;display:flex;flex-direction:column;gap:clamp(12px,1.8vh,20px);">
+      <div class="arch" style="grid-template-columns:auto 1fr;gap:clamp(16px,2.5vw,36px);align-items:center;">
+        <div class="archhead" style="text-align:right;color:var(--muted);">A consumable</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:clamp(13px,1.35vw,18px);">
+          <span class="prod" style="background:var(--tint);padding:8px 14px;">the one-off</span><span style="color:var(--gray)">→</span>
+          <span class="prod" style="background:var(--tint);padding:8px 14px;">what should recur</span><span style="color:var(--gray)">→</span>
+          <span class="prod" style="background:var(--grad);color:#fff;padding:8px 14px;">the full protocol</span>
+        </div>
+        <div class="archhead" style="text-align:right;color:var(--muted);">A single product</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:clamp(13px,1.35vw,18px);">
+          <span class="prod" style="background:var(--tint);padding:8px 14px;">one product</span><span style="color:var(--gray)">→</span>
+          <span class="prod" style="background:var(--tint);padding:8px 14px;">one for every part of a life</span><span style="color:var(--gray)">→</span>
+          <span class="prod" style="background:var(--grad);color:#fff;padding:8px 14px;">the identity</span>
+        </div>
+        <div class="archhead" style="text-align:right;color:var(--muted);">A ritual / beauty</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:clamp(13px,1.35vw,18px);">
+          <span class="prod" style="background:var(--tint);padding:8px 14px;">the product</span><span style="color:var(--gray)">→</span>
+          <span class="prod" style="background:var(--tint);padding:8px 14px;">the routine</span><span style="color:var(--gray)">→</span>
+          <span class="prod" style="background:var(--grad);color:#fff;padding:8px 14px;">the community</span>
+        </div>
+      </div>
+      <div class="pt" style="justify-content:center;margin-top:14px;max-width:64ch;margin-left:auto;margin-right:auto;">
+        <span>The gap between what a customer is worth and how you treat them — I call it your <b>found revenue.</b> Every brand in this room is sitting on some.</span></div>
+    </div></div>
+  </section>
+
+  <!-- 18 STACKED PROOF -->
+  <section class="slide dark">
+    <div class="kicker">It works — and not just for us</div>
+    <h2 style="color:#fff;margin-bottom:clamp(18px,3vh,32px);">The proof, stacked.</h2>
+    <div class="content" style="align-items:flex-start;padding-top:0;"><div class="chips">
+      <div class="chip"><span class="n">$20K → $40K</span><span class="t">One masterclass generated double its spend in related products — the same customers, climbing.</span></div>
+      <div class="chip"><span class="n">$1.44</span><span class="t">IM8 earns $1.44 gross profit on every $1 of acquisition — because they're subscribers. Danny's right. It compounds.</span></div>
+      <div class="chip"><span class="n">11×</span><span class="t">A customer who reaches the top of the climb is worth eleven times one who never leaves the first rung.</span></div>
+    </div></div>
+    <div class="flag">$20K→$40K internal · $1.44 public (IM8 / General Catalyst)</div>
+  </section>
+
+  <!-- 18 ECOSYSTEM -->
+  <section class="slide night glow center">
+    <div class="kicker">The real unlock</div>
+    <div style="margin:auto 0;">
+      <h2 style="color:#fff;max-width:24ch;">You're not selling more products.</h2>
+      <h2 class="serif" style="font-weight:500;color:var(--pink);margin-top:.2em;max-width:26ch;">You're selling a life they don't leave.</h2>
+      <div class="pt" style="justify-content:center;margin-top:26px;max-width:52ch;margin-left:auto;margin-right:auto;"><span style="color:rgba(255,255,255,.85)">Pathways, community, events, identity. A bundle grows the order. A subscription grows the customer. <b>An ecosystem grows a life</b> — and you can't unsubscribe from who you are.</span></div>
+    </div>
+  </section>
+
+  <!-- 19 WHY NOW -->
+  <section class="slide">
+    <div class="kicker">Why now</div>
+    <h2>The whole engine used to take a year. <em>Now, an afternoon.</em></h2>
+    <div class="content"><div class="split">
+      <div class="viz"><div style="display:flex;align-items:center;gap:clamp(16px,3vw,38px);">
+        <div style="text-align:center;background:var(--tint);border-radius:18px;padding:clamp(18px,2.6vw,32px);min-width:clamp(140px,19vw,240px);"><div class="hero heromid" style="font-size:clamp(38px,5vw,68px);">12mo</div><div class="muted" style="margin-top:8px;font-size:14px;">a data army</div></div>
+        <div style="font-size:clamp(26px,4vw,50px);color:var(--gray);">→</div>
+        <div style="text-align:center;background:var(--grad);border-radius:18px;padding:clamp(18px,2.6vw,32px);min-width:clamp(140px,19vw,240px);color:#fff;"><div class="hero white heromid" style="font-size:clamp(38px,5vw,68px);">1 day</div><div style="margin-top:8px;font-size:14px;color:var(--pink);">built in Claude Code</div></div>
+      </div></div>
+      <div class="points">
+        <div class="pt"><span>Pathways, personalization, next-rung logic.</span></div>
+        <div class="pt"><span>What needed a team and a year now takes an afternoon.</span></div>
+        <div class="pt"><b>The ecosystem is finally buildable at your size.</b></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- 22 THE DARE / MONDAY DIAGNOSTIC -->
+  <section class="slide dark glow">
+    <div class="kicker">Run this Monday — find your found revenue</div>
+    <h2 style="color:#fff;">Pull <em>three</em> numbers.</h2>
+    <div class="content"><div style="width:100%;display:flex;flex-direction:column;gap:16px;">
+      <div class="chip"><span class="n">01</span><span class="t">What % of your <b>best</b> customers were <b>already customers</b> before their biggest purchase?</span></div>
+      <div class="chip"><span class="n">02</span><span class="t">What % of your base has <b>ever bought a second thing</b> from you?</span></div>
+      <div class="chip"><span class="n">03</span><span class="t">What's your <b>year-two retention</b> — really?</span></div>
+      <div class="pt" style="justify-content:center;margin-top:12px;max-width:56ch;margin-left:auto;margin-right:auto;">
+        <span style="color:rgba(255,255,255,.85)">You'll find the first number tonight. You won't know what it's telling you. <b style="color:var(--pink)">That gap is the work — and if you want to know, come find me.</b></span></div>
+    </div></div>
+  </section>
+
+</div>
+
+<div id="dots"></div>
+<div id="num">1 / 22</div>
+<div id="ov"></div>
+
+<script>
+  const slides=Array.from(document.querySelectorAll('.slide'));
+  const dotsBox=document.getElementById('dots'),num=document.getElementById('num'),bar=document.getElementById('bar'),ov=document.getElementById('ov');
+  let i=0;
+  slides.forEach((_,n)=>{const d=document.createElement('div');d.className='d'+(n===0?' on':'');d.onclick=e=>{e.stopPropagation();go(n);};dotsBox.appendChild(d);});
+  const dots=Array.from(dotsBox.children);
+  function go(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    dots.forEach((d,k)=>d.classList.toggle('on',k===i));
+    num.textContent=(i+1)+' / '+slides.length;
+    bar.style.width=(i/(slides.length-1)*100)+'%';
+    const d2=/dark|night|plum/.test(slides[i].className);
+    dots.forEach(d=>{if(!d.classList.contains('on'))d.style.background=d2?'#5a4d70':'#cabbe0';});
+  }
+  const next=()=>go(i+1),prev=()=>go(i-1);
+  document.getElementById('stage').addEventListener('click',e=>{if(e.clientX>window.innerWidth/2)next();else prev();});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'){e.preventDefault();prev();}
+    else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+    else if(e.key.toLowerCase()==='o'){ov.classList.toggle('show');if(ov.classList.contains('show'))buildOv();}
+  });
+  function buildOv(){ov.innerHTML='';slides.forEach((s,n)=>{const t=document.createElement('div');t.className='th'+(n===i?' cur':'');t.style.background=/plum/.test(s.className)?'#5A0DA0':(/dark|night/.test(s.className)?'#160B2A':'#FBF9F5');t.innerHTML='<div class="n">'+(n+1)+'</div>';t.onclick=()=>{go(n);ov.classList.remove('show');};ov.appendChild(t);});}
+  go(0);
+</script>
+</body>
+</html>
